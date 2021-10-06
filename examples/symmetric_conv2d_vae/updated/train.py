@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Optional, List, Tuple, Dict, Any
 from mdlearn.utils import parse_args, BaseSettings
 from mdlearn.nn.models.vae.symmetric_conv2d_vae import SymmetricConv2dVAETrainer
+import glob
+import pdb
 
 
 class SymmetricConv2dVAEConfig(BaseSettings):
@@ -92,11 +94,20 @@ def main(cfg: SymmetricConv2dVAEConfig):
     )
 
     print(trainer.model)
-    
+
     # Load input data from HDF5 file
-    with h5py.File(cfg.input_path) as f:
-        contact_maps = f["contact_map"][...]
-        scalars = {"rmsd": f["rmsd"][...]}
+    if str(cfg.input_path)[-3:] == '.h5':
+        with h5py.File(cfg.input_path) as f:
+            contact_maps = f["contact_map"][...]
+            scalars = {"rmsd": f["rmsd"][...]}
+    # iterate over the directory
+    else:
+        contact_maps = []
+        scalars = {'rmsd': []}
+        for i in glob.glob(str(cfg.input_path)+'/*.h5'):
+            with h5py.File(i, 'r') as f:
+                contact_maps.extend(list(f["contact_map"][...]))
+                scalars['rmsd'].extend(list(f["rmsd"][...]))
 
     print(f"Number of contact maps: {len(contact_maps)}")
 
@@ -123,8 +134,7 @@ def main(cfg: SymmetricConv2dVAEConfig):
 if __name__ == "__main__":
     # Generate sample yaml
     #SymmetricConv2dVAEConfig().dump_yaml("symmetric_conv2d_vae_template.yaml")
-    #exit() 
+    #exit()
     args = parse_args()
     cfg = SymmetricConv2dVAEConfig.from_yaml(args.config)
     main(cfg)
-
