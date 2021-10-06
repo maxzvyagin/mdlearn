@@ -59,7 +59,7 @@ class SymmetricConv2dVAEConfig(BaseSettings):
 def main(cfg: SymmetricConv2dVAEConfig):
     # Initialize the model
     trainer = SymmetricConv2dVAETrainer(
-        input_shape=[1, final_shape, final_shape],
+        input_shape=[1, cfg.final_shape, cfg.final_shape],
         filters=cfg.filters,
         kernels=cfg.kernels,
         strides=cfg.strides,
