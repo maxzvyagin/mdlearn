@@ -417,7 +417,12 @@ class Trainer:
         else:
             raise NotImplementedError(f"scheduler {self.scheduler_name} step function.")
 
-    def fit(self):
+    def fit(self,
+        X: np.ndarray,
+        scalars: Dict[str, np.ndarray] = {},
+        output_path: PathLike = "./",
+        checkpoint: Optional[PathLike] = None,
+        final_shape=None):
         """Trains the model on the input dataset.
 
         Raises

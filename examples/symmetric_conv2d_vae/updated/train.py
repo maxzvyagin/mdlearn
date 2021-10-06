@@ -55,8 +55,8 @@ class SymmetricConv2dVAEConfig(BaseSettings):
 
     inference_batch_size: int = 128
 
-def main(cfg: SymmetricConv2dVAEConfig):
 
+def main(cfg: SymmetricConv2dVAEConfig):
     # Initialize the model
     trainer = SymmetricConv2dVAETrainer(
         input_shape=cfg.input_shape,
@@ -105,17 +105,12 @@ def main(cfg: SymmetricConv2dVAEConfig):
     else:
         contact_maps = []
         scalars = {'rmsd': []}
-        for i in glob.glob(str(cfg.input_path)+'/*.h5'):
+        for i in glob.glob(str(cfg.input_path) + '/*.h5'):
             with h5py.File(i, 'r') as f:
                 contact_maps.extend(list(f["contact_map"][...]))
                 scalars['rmsd'].extend(list(f["rmsd"][...]))
 
     print(f"Number of contact maps: {len(contact_maps)}")
-
-    # if cfg.final_shape is not None:
-    #     for i in contact_maps:
-    #         i = i[:, :512, :512]
-    #         print(i.shape)
 
     # Train model
     trainer.fit(
@@ -123,7 +118,7 @@ def main(cfg: SymmetricConv2dVAEConfig):
         scalars=scalars,
         output_path=cfg.output_path,
         checkpoint=cfg.checkpoint_path,
-        final_shape = cfg.final_shape
+        final_shape=cfg.final_shape
     )
 
     pd.DataFrame(trainer.loss_curve_).to_csv(cfg.output_path / "loss.csv")
@@ -140,8 +135,8 @@ def main(cfg: SymmetricConv2dVAEConfig):
 
 if __name__ == "__main__":
     # Generate sample yaml
-    #SymmetricConv2dVAEConfig().dump_yaml("symmetric_conv2d_vae_template.yaml")
-    #exit()
+    # SymmetricConv2dVAEConfig().dump_yaml("symmetric_conv2d_vae_template.yaml")
+    # exit()
     args = parse_args()
     cfg = SymmetricConv2dVAEConfig.from_yaml(args.config)
     main(cfg)
