@@ -114,8 +114,7 @@ def main(cfg: SymmetricConv2dVAEConfig):
 
     if cfg.final_shape is not None:
         for i in contact_maps:
-            i[1] = i[1][:cfg.final_shape]
-            i[2] = i[2][:cfg.final_shape]
+            i = i[:, :512, :512]
             print(i.shape)
 
     # Train model
