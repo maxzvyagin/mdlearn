@@ -51,6 +51,7 @@ class SymmetricConv2dVAEConfig(BaseSettings):
     train_subsample_pct: float = 1.0
     valid_subsample_pct: float = 1.0
     use_wandb: bool = False
+    final_shape: int = None
 
     inference_batch_size: int = 128
 
@@ -110,6 +111,12 @@ def main(cfg: SymmetricConv2dVAEConfig):
                 scalars['rmsd'].extend(list(f["rmsd"][...]))
 
     print(f"Number of contact maps: {len(contact_maps)}")
+
+    if cfg.final_shape is not None:
+        for i in contact_maps:
+            i[1] = i[1][:cfg.final_shape]
+            i[2] = i[2][:cfg.final_shape]
+            print(i.shape)
 
     # Train model
     trainer.fit(
