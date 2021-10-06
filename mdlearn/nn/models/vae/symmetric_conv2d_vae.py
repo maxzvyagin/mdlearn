@@ -386,7 +386,7 @@ class SymmetricConv2dVAETrainer(Trainer):
         self._set_num_threads()
 
         # Load training and validation data
-        dataset = ContactMapDataset(X, self.input_shape, scalars, final_shape=final_shape)
+        dataset = ContactMapDataset(X, [1, 926, 926], scalars, final_shape=final_shape)
         train_loader, valid_loader = train_valid_split(
             dataset,
             self.split_pct,
