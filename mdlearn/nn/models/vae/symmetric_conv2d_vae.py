@@ -331,6 +331,7 @@ class SymmetricConv2dVAETrainer(Trainer):
         scalars: Dict[str, np.ndarray] = {},
         output_path: PathLike = "./",
         checkpoint: Optional[PathLike] = None,
+        final_shape: Optional[int] = None
     ):
         r"""Trains the autoencoder on the input data :obj:`X`.
 
@@ -385,7 +386,7 @@ class SymmetricConv2dVAETrainer(Trainer):
         self._set_num_threads()
 
         # Load training and validation data
-        dataset = ContactMapDataset(X, self.input_shape, scalars)
+        dataset = ContactMapDataset(X, self.input_shape, scalars, final_shape=final_shape)
         train_loader, valid_loader = train_valid_split(
             dataset,
             self.split_pct,

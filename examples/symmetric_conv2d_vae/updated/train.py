@@ -112,10 +112,10 @@ def main(cfg: SymmetricConv2dVAEConfig):
 
     print(f"Number of contact maps: {len(contact_maps)}")
 
-    if cfg.final_shape is not None:
-        for i in contact_maps:
-            i = i[:, :512, :512]
-            print(i.shape)
+    # if cfg.final_shape is not None:
+    #     for i in contact_maps:
+    #         i = i[:, :512, :512]
+    #         print(i.shape)
 
     # Train model
     trainer.fit(
@@ -123,6 +123,7 @@ def main(cfg: SymmetricConv2dVAEConfig):
         scalars=scalars,
         output_path=cfg.output_path,
         checkpoint=cfg.checkpoint_path,
+        final_shape = cfg.final_shape
     )
 
     pd.DataFrame(trainer.loss_curve_).to_csv(cfg.output_path / "loss.csv")

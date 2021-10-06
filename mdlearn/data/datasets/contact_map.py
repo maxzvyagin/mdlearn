@@ -18,7 +18,7 @@ class ContactMapHDF5Dataset(Dataset):
         scalar_dset_names: List[str] = [],
         values_dset_name: Optional[str] = None,
         scalar_requires_grad: bool = False,
-        in_memory: bool = True,
+        in_memory: bool = True
     ):
         """
         Parameters
@@ -142,6 +142,7 @@ class ContactMapDataset(Dataset):
         shape: Tuple[int, int, int],
         scalars: Dict[str, np.ndarray] = {},
         scalar_requires_grad: bool = False,
+        final_shape = None
     ):
         """
         Parameters
@@ -174,6 +175,7 @@ class ContactMapDataset(Dataset):
         self.shape = shape
         self.scalars = scalars
         self._scalar_requires_grad = scalar_requires_grad
+        self.final_shape = final_shape
 
     def _get_data(self, idx) -> torch.Tensor:
         # Data is stored as np.concatenate((row_inds, col_inds))
@@ -183,6 +185,9 @@ class ContactMapDataset(Dataset):
         # Set shape to the last 2 elements of self.shape.
         data = torch.sparse.FloatTensor(indices, values, self.shape[-2:]).to_dense()
         data = data.view(self.shape)
+        if self.final_shape is not None:
+            data = data[:, :self.final_shape, :self.final_shape]
+            print(data.shape)
         return data
 
     def __len__(self):
