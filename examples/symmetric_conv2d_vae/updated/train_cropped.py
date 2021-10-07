@@ -123,15 +123,15 @@ def main(cfg: SymmetricConv2dVAEConfig):
 
     pd.DataFrame(trainer.loss_curve_).to_csv(cfg.output_path / "loss.csv")
 
-    # Generate latent embeddings in inference mode
-    z, recon_vectors, loss, recon_loss, kld_loss, = trainer.predict(
-        X=contact_maps, inference_batch_size=cfg.inference_batch_size
-    )
-
-    np.save(cfg.output_path / "z.npy", z)
-    np.save(cfg.output_path / "recon_vectors.npy", recon_vectors)
-
-    print(f"Final loss on the full dataset is: {loss}, recon: {recon_loss}, kld: {kld_loss}")
+    # # Generate latent embeddings in inference mode
+    # z, recon_vectors, loss, recon_loss, kld_loss, = trainer.predict(
+    #     X=contact_maps, inference_batch_size=cfg.inference_batch_size
+    # )
+    #
+    # np.save(cfg.output_path / "z.npy", z)
+    # np.save(cfg.output_path / "recon_vectors.npy", recon_vectors)
+    #
+    # print(f"Final loss on the full dataset is: {loss}, recon: {recon_loss}, kld: {kld_loss}")
 
 
 if __name__ == "__main__":
