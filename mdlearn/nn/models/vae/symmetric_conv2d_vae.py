@@ -428,6 +428,7 @@ class SymmetricConv2dVAETrainer(Trainer):
                     avg_valid_kld_loss,
                     z,
                     paints,
+                    recon
                 ) = self._validate(valid_loader)
 
             if self.verbose:
