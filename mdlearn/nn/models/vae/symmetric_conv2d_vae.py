@@ -513,7 +513,7 @@ class SymmetricConv2dVAETrainer(Trainer):
         """
         from mdlearn.data.datasets.contact_map import ContactMapDataset
 
-        if self.input_shape[-1] == 512
+        if self.input_shape[-1] == 512:
             dataset = ContactMapDataset(X, self.input_shape, final_shape=512)
         else:
             dataset = ContactMapDataset(X, self.input_shape)
