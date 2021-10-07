@@ -1,0 +1,54 @@
+input_path: /lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/anda_newsim_7egq_segmentB
+output_path: "chainB-fullsim-raw-25dim"
+checkpoint_path: null
+input_shape:
+- 1
+- 187
+- 187
+filters:
+- 64
+- 64
+- 64
+- 64
+kernels:
+- 5
+- 3
+- 3
+- 3
+strides:
+- 2
+- 2
+- 2
+- 2
+affine_widths:
+- 128
+affine_dropouts:
+- 0.0
+latent_dim: 25
+activation: ReLU
+output_activation: Sigmoid
+lambda_rec: 1.0
+seed: 42
+in_gpu_memory: false
+num_data_workers: 0
+prefetch_factor: 2
+split_pct: 0.8
+split_method: random
+batch_size: 64
+shuffle: true
+device: cuda
+optimizer_name: Adam
+optimizer_hparams:
+    lr: 0.01
+scheduler_name: null
+scheduler_hparams: {}
+epochs: 10
+verbose: true
+clip_grad_max_norm: 10.0
+checkpoint_log_every: 2
+plot_log_every: 2
+plot_n_samples: 40000
+plot_method: raw
+train_subsample_pct: 1.0
+valid_subsample_pct: 1.0
+use_wandb: false
