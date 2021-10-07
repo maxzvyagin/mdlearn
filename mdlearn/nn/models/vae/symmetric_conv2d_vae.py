@@ -541,11 +541,13 @@ class SymmetricConv2dVAETrainer(Trainer):
                     avg_valid_kld_loss,
                     latent_vectors,
                     _,
+                    recon_vectors
                 ) = self._validate(data_loader)
                 # Restore class state
                 self.scalar_dset_names = tmp
                 return (
                     latent_vectors,
+                    recon_vectors,
                     avg_valid_loss,
                     avg_valid_recon_loss,
                     avg_valid_kld_loss,
@@ -594,6 +596,7 @@ class SymmetricConv2dVAETrainer(Trainer):
         avg_loss, avg_recon_loss, avg_kld_loss = 0.0, 0.0, 0.0
         paints = defaultdict(list)
         latent_vectors = []
+        recon_vectors = []
         for i, batch in enumerate(valid_loader):
 
             if i / len(valid_loader) > self.valid_subsample_pct:
@@ -617,6 +620,8 @@ class SymmetricConv2dVAETrainer(Trainer):
             for name in self.scalar_dset_names:
                 paints[name].append(batch[name].cpu().numpy())
 
+            recon_vectors.append(recon_x.cpu().numpy())
+
         avg_loss /= len(valid_loader)
         avg_recon_loss /= len(valid_loader)
         avg_kld_loss /= len(valid_loader)
@@ -624,4 +629,4 @@ class SymmetricConv2dVAETrainer(Trainer):
         latent_vectors = np.concatenate(latent_vectors)
         paints = {name: np.concatenate(scalar) for name, scalar in paints.items()}
 
-        return avg_loss, avg_recon_loss, avg_kld_loss, latent_vectors, paints
+        return avg_loss, avg_recon_loss, avg_kld_loss, latent_vectors, paints, recon_vectors
