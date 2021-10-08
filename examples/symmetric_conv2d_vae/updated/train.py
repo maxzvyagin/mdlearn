@@ -125,7 +125,7 @@ def main(cfg: SymmetricConv2dVAEConfig):
 
     # Generate latent embeddings in inference mode
     z, recon_vectors, loss, recon_loss, kld_loss, = trainer.predict(
-        X=contact_maps, inference_batch_size=cfg.inference_batch_size
+        X=contact_maps, inference_batch_size=cfg.inference_batch_size, just_valid=True
     )
 
     np.save(cfg.output_path / "z.npy", z)
