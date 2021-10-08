@@ -495,6 +495,7 @@ class SymmetricConv2dVAETrainer(Trainer):
         X: np.ndarray,
         inference_batch_size: int = 128,
         checkpoint: Optional[PathLike] = None,
+        just_valid = False
     ) -> Tuple[np.ndarray, float, float, float]:
         r"""Predict using the LinearAE
 
@@ -520,16 +521,32 @@ class SymmetricConv2dVAETrainer(Trainer):
             dataset = ContactMapDataset(X, [1, 926, 926], final_shape=512)
         else:
             dataset = ContactMapDataset(X, self.input_shape)
-        data_loader = DataLoader(
-            dataset,
-            batch_size=inference_batch_size,
-            shuffle=False,
-            num_workers=self.num_data_workers,
-            prefetch_factor=self.prefetch_factor,
-            persistent_workers=self.persistent_workers,
-            drop_last=False,
-            pin_memory=not self.in_gpu_memory,
-        )
+
+        if just_valid:
+            train_loader, valid_loader = train_valid_split(
+                dataset,
+                self.split_pct,
+                self.split_method,
+                batch_size=self.batch_size,
+                shuffle=self.shuffle,
+                num_workers=self.num_data_workers,
+                prefetch_factor=self.prefetch_factor,
+                persistent_workers=self.persistent_workers,
+                drop_last=True,
+                pin_memory=not self.in_gpu_memory,
+            )
+            data_loader = valid_loader
+        else:
+            data_loader = DataLoader(
+                dataset,
+                batch_size=inference_batch_size,
+                shuffle=False,
+                num_workers=self.num_data_workers,
+                prefetch_factor=self.prefetch_factor,
+                persistent_workers=self.persistent_workers,
+                drop_last=False,
+                pin_memory=not self.in_gpu_memory,
+            )
 
         if checkpoint is not None:
             self._load_checkpoint(checkpoint)
@@ -547,9 +564,25 @@ class SymmetricConv2dVAETrainer(Trainer):
                     avg_valid_recon_loss,
                     avg_valid_kld_loss,
                     latent_vectors,
-                    _,
+                    predict_paints,
                     recon_vectors
                 ) = self._validate(data_loader)
+                if self.plot_method is not None:
+                    htmls = log_latent_visualization(
+                        latent_vectors,
+                        predict_paints,
+                        plot_path,
+                        -1,
+                        self.plot_n_samples,
+                        self.plot_method,
+                    )
+                    if self.use_wandb:
+                        # Optionally, log visualizations to wandb
+                        for name, html in htmls.items():
+                            metrics[name] = wandb.Html(html, inject=False)  # noqa
+
+                if self.use_wandb:
+                    wandb.log(metrics)
                 # Restore class state
                 self.scalar_dset_names = tmp
                 return (
