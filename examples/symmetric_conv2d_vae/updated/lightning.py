@@ -61,7 +61,7 @@ class CVAE(pl.LightningModule):
 
     def training_step_end(self, outputs):
         _, recon_x = outputs['forward']
-        recon_x = recon_x
+        recon_x = recon_x.clamp(0, 1)
         x = outputs['expected']
         x = x
         # kld_loss = self.model.kld_loss()
@@ -79,7 +79,7 @@ class CVAE(pl.LightningModule):
 
     def test_step_end(self, outputs):
         _, recon_x = outputs['forward']
-        recon_x = recon_x.half()
+        recon_x = recon_x.clamp(0, 1)
         x = outputs['expected']
         x = x.half()
         # kld_loss = self.model.kld_loss().float()
