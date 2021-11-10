@@ -30,14 +30,9 @@ class CVAE(pl.LightningModule):
         self.train_loader, self.valid_loader = train_valid_split(
             dataset,
             0.8,
-            "partition",
+            "random",
             batch_size=1,
-            shuffle=True,
-            num_workers=1,
-            prefetch_factor=0,
-            persistent_workers=False,
-            drop_last=True,
-            pin_memory=False,
+            shuffle=True
         )
 
     def train_dataloader(self):
