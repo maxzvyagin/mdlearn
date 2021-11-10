@@ -60,11 +60,13 @@ class CVAE(pl.LightningModule):
     def training_step(self, train_batch, batch_idx):
         # x, y = train_batch
         x = train_batch["X"]
-        return {'forward': self.forward(x).half(), 'expected': x.half()}
+        return {'forward': self.forward(x), 'expected': x}
 
     def training_step_end(self, outputs):
         _, recon_x = outputs['forward']
+        recon_x = recon_x.half()
         x = outputs['expected']
+        x = x.half()
         kld_loss = self.model.kld_loss()
         recon_loss = self.model.recon_loss(x, recon_x)
         loss = 1.0 * recon_loss + kld_loss
@@ -76,11 +78,13 @@ class CVAE(pl.LightningModule):
 
     def test_step(self, test_batch, batch_idx):
         x = train_batch["X"]
-        return {'forward': self.forward(x).half(), 'expected': x.half()}
+        return {'forward': self.forward(x), 'expected': x}
 
     def test_step_end(self, outputs):
         _, recon_x = outputs['forward']
+        recon_x = recon_x.half()
         x = outputs['expected']
+        x = x.half()
         kld_loss = self.model.kld_loss()
         recon_loss = self.model.recon_loss(x, recon_x)
         loss = 1.0 * recon_loss + kld_loss
