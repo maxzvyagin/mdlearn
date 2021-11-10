@@ -20,7 +20,7 @@ class CVAE(pl.LightningModule):
         # self.model = smp.MAnet(encoder_name="resnet34", encoder_weights=None, in_channels=in_channels, classes=classes)
         self.model = SymmetricConv2dVAE(input_shape=input_shape, filters=[64, 64, 64, 64], kernels=[5, 3, 3, 3],
                                         strides=[2, 2, 2, 2], latent_dim=10)
-        self.criterion = torch.nn.BCELoss()
+        self.criterion = torch.nn.BCELossWithLogits()
 
         with h5py.File(input_path) as f:
             contact_maps = np.array(f["contact_map"])
@@ -61,7 +61,7 @@ class CVAE(pl.LightningModule):
 
     def training_step_end(self, outputs):
         _, recon_x = outputs['forward']
-        recon_x = recon_x.clamp(0, 1)
+        # recon_x = recon_x.clamp(0, 1)
         x = outputs['expected']
         x = x
         # kld_loss = self.model.kld_loss()
@@ -79,7 +79,7 @@ class CVAE(pl.LightningModule):
 
     def test_step_end(self, outputs):
         _, recon_x = outputs['forward']
-        recon_x = recon_x.clamp(0, 1)
+        # recon_x = recon_x.clamp(0, 1)
         x = outputs['expected']
         x = x.half()
         # kld_loss = self.model.kld_loss().float()
