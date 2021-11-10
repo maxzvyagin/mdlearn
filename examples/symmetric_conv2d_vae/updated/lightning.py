@@ -34,8 +34,8 @@ class CVAE(pl.LightningModule):
             dataset,
             0.8,
             "random",
-            # batch_size=200,
-            batch_size=64,
+            batch_size=200,
+            # batch_size=64,
             shuffle=True
         )
 
@@ -102,7 +102,7 @@ def lightning():
                  # input_path='/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/bba_deepdrive/chainA_h5_data/traj_segment_eq.2.1.h5')
                  input_path='/homes/mzvyagin/gordon_bell_processing/anda_newsim_7egq_segmentA/traj_segment_eq.2.10.h5')
     wandb_logger = WandbLogger(project="cvae", entity="mzvyagin", group="ddp")
-    trainer = pl.Trainer(max_epochs=5, gpus=6, auto_select_gpus=True, logger=wandb_logger, precision=16,
+    trainer = pl.Trainer(max_epochs=5, gpus=8, auto_select_gpus=True, logger=wandb_logger, precision=16,
                          strategy=DDPPlugin(find_unused_parameters=False), log_every_n_steps=16)
     trainer.tune(model)
     trainer.fit(model)
