@@ -69,10 +69,9 @@ class CVAE(pl.LightningModule):
         # loss = 1.0 * recon_loss + kld_loss
         loss = recon_loss
         # only use when  on dp
-        logs = {'train_loss': loss.detach().cpu(), "train_recon_loss":recon_loss.detach().cpu(),
-                "train_kld_loss": kld_loss.detach().cpu()}
+        logs = {'train_loss': loss.detach().cpu()}
         self.log("training", logs)
-        return {'loss': loss, 'logs': logs, 'train_recon': recon_loss, 'train_kld': kld_loss}
+        return {'loss': loss, 'logs': logs}
 
     def test_step(self, test_batch, batch_idx):
         x = train_batch["X"].half()
@@ -88,10 +87,9 @@ class CVAE(pl.LightningModule):
         # loss = 1.0 * recon_loss + kld_loss
         loss = recon_loss
         # only use when  on dp
-        logs = {'test_loss': loss.detach().cpu(), "test_recon_loss": recon_loss.detach().cpu(),
-                "test_kld_loss": kld_loss.detach().cpu()}
+        logs = {'test_loss': loss.detach().cpu()}
         self.log("test", logs)
-        return {'loss': loss, 'test_logs': logs, 'test_recon': recon_loss, 'test_kld': kld_loss}
+        return {'loss': loss, 'test_logs': logs}
 
 
 def lightning():
