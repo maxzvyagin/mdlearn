@@ -9,7 +9,7 @@ import torch
 
 class CVAE(pl.LightningModule):
     def __init__(self, input_shape, input_path):
-        super(PyTorch_UNet, self).__init__()
+        super(CVAE, self).__init__()
         self.config = config
         # sigmoid is part of BCE with logits loss
         # self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
