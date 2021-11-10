@@ -36,7 +36,7 @@ class CVAE(pl.LightningModule):
             "random",
             batch_size=64,
             shuffle=True,
-            num_workers=256
+            num_workers=10
         )
 
     def train_dataloader(self):
@@ -66,10 +66,10 @@ class CVAE(pl.LightningModule):
         # recon_x = recon_x.clamp(0, 1)
         x = outputs['expected']
         x = x
-        # kld_loss = self.model.kld_loss()
+        kld_loss = self.model.kld_loss()
         recon_loss = self.criterion(recon_x.half(), x.half())
-        # loss = 1.0 * recon_loss + kld_loss
-        loss = recon_loss
+        loss = 1.0 * recon_loss + kld_loss
+        # loss = recon_loss
         # only use when  on dp
         logs = {'train_loss': loss.detach().cpu()}
         self.log("training", logs)
@@ -84,10 +84,10 @@ class CVAE(pl.LightningModule):
         # recon_x = recon_x.clamp(0, 1)
         x = outputs['expected']
         x = x.half()
-        # kld_loss = self.model.kld_loss().float()
+        kld_loss = self.model.kld_loss().float()
         recon_loss = self.criterion(recon_x, x)
-        # loss = 1.0 * recon_loss + kld_loss
-        loss = recon_loss
+        loss = 1.0 * recon_loss + kld_loss
+        # loss = recon_loss
         # only use when  on dp
         logs = {'test_loss': loss.detach().cpu()}
         self.log("test", logs)
