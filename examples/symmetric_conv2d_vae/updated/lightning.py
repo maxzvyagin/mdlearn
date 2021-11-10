@@ -20,6 +20,7 @@ class CVAE(pl.LightningModule):
         # self.model = smp.MAnet(encoder_name="resnet34", encoder_weights=None, in_channels=in_channels, classes=classes)
         self.model = SymmetricConv2dVAE(input_shape=input_shape, filters=[64, 64, 64, 64], kernels=[5, 3, 3, 3],
                                         strides=[2, 2, 2, 2], latent_dim=10)
+        self.criterion = torch.nn.BCELoss()
 
         with h5py.File(input_path) as f:
             contact_maps = np.array(f["contact_map"])
@@ -64,7 +65,7 @@ class CVAE(pl.LightningModule):
         x = outputs['expected']
         x = x.half()
         kld_loss = self.model.kld_loss().float()
-        recon_loss = self.model.recon_loss(x, recon_x).float()
+        recon_loss = self.criterion(x, recon_x)
         loss = 1.0 * recon_loss + kld_loss
         # only use when  on dp
         logs = {'train_loss': loss.detach().cpu(), "train_recon_loss":recon_loss.detach().cpu(),
@@ -82,7 +83,7 @@ class CVAE(pl.LightningModule):
         x = outputs['expected']
         x = x.half()
         kld_loss = self.model.kld_loss().float()
-        recon_loss = self.model.recon_loss(x, recon_x).float()
+        recon_loss = self.criterion(x, recon_x)
         loss = 1.0 * recon_loss + kld_loss
         # only use when  on dp
         logs = {'test_loss': loss.detach().cpu(), "test_recon_loss": recon_loss.detach().cpu(),
