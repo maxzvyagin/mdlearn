@@ -8,9 +8,10 @@ import torch
 import numpy as np
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.plugins import DDPPlugin
+import glob
 
 class CVAE(pl.LightningModule):
-    def __init__(self, input_shape, input_path):
+    def __init__(self, input_shape, input_path_list):
         super(CVAE, self).__init__()
         self.input_shape = input_shape
         self.input_path = input_path
@@ -23,7 +24,10 @@ class CVAE(pl.LightningModule):
                                         strides=[2, 2, 2, 2], latent_dim=10)
         self.criterion = torch.nn.BCEWithLogitsLoss()
 
-        with h5py.File(input_path) as f:
+        contact_maps = []
+        scalars = []
+        for file in input_path_list:
+            with h5py.File(file) as f:
             contact_maps = np.array(f["contact_map"])
             scalars = {"rmsd": np.array(f["rmsd"])}
 
@@ -98,8 +102,9 @@ class CVAE(pl.LightningModule):
 
 def lightning():
     torch.manual_seed(0)
+    input_path_list = glob.glob('/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/anda_newsim_7egq_segmentA/*.h5')
     model = CVAE(input_shape=[1, 926, 926],
-                 input_path='/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/bba_deepdrive/chainA_h5_data/traj_segment_eq.2.1.h5')
+                 input_path=input_path_list)
                  # input_path='/homes/mzvyagin/gordon_bell_processing/anda_newsim_7egq_segmentA/traj_segment_eq.2.10.h5')
     wandb_logger = WandbLogger(project="cvae", entity="mzvyagin", group="ddp")
     trainer = pl.Trainer(max_epochs=5, gpus=8, auto_select_gpus=True, logger=wandb_logger, precision=16,
