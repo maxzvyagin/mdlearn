@@ -4,6 +4,8 @@ from mdlearn.data.utils import train_valid_split
 from mdlearn.data.datasets.contact_map import ContactMapDataset
 import h5py
 import wandb
+import torch
+
 
 class CVAE(pl.LightningModule):
     def __init__(self, input_shape, input_path):
