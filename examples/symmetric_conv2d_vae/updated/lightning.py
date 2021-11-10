@@ -5,7 +5,7 @@ from mdlearn.data.datasets.contact_map import ContactMapDataset
 import h5py
 import wandb
 import torch
-
+import numpy as np
 
 class CVAE(pl.LightningModule):
     def __init__(self, input_shape, input_path):
@@ -20,12 +20,12 @@ class CVAE(pl.LightningModule):
         self.model = SymmetricConv2dVAE(input_shape=input_shape)
 
         with h5py.File(input_path) as f:
-            contact_maps = f["contact_map"][...]
-            scalars = {"rmsd": f["rmsd"][...]}
+            contact_maps = np.array(f["contact_map"])
+            scalars = {"rmsd": np.array(f["rmsd"])}
 
         print(f"Number of contact maps: {len(contact_maps)}")
 
-        dataset = ContactMapDataset(contact_maps, self.input_shape, scalars)
+        dataset = ContactMapDataset(data=contact_maps, shape=self.input_shape, scalars=scalars)
         self.train_loader, self.valid_loader = train_valid_split(
             dataset,
             0.8,
@@ -89,8 +89,7 @@ class CVAE(pl.LightningModule):
 def lightning():
     torch.manual_seed(0)
     model = CVAE(input_shape=[1, 926, 926],
-                 input_path='/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/bba_deepdrive/chainA_h5_data'
-                            '/traj_segment_eq.2.1.h5')
+                 input_path='/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/bba_deepdrive/chainA_h5_data/traj_segment_eq.2.1.h5')
     wandb_logger = WandbLogger()
     trainer = pl.Trainer(max_epochs=5, gpus=1, auto_select_gpus=True, logger=wandb_logger)
     trainer.tune(model)
