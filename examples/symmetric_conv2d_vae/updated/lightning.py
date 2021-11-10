@@ -7,6 +7,7 @@ import wandb
 import torch
 import numpy as np
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.plugins import DDPPlugin
 
 class CVAE(pl.LightningModule):
     def __init__(self, input_shape, input_path):
@@ -33,7 +34,7 @@ class CVAE(pl.LightningModule):
             dataset,
             0.8,
             "random",
-            batch_size=1,
+            batch_size=64,
             shuffle=True
         )
 
@@ -97,7 +98,8 @@ def lightning():
     model = CVAE(input_shape=[1, 926, 926],
                  input_path='/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/bba_deepdrive/chainA_h5_data/traj_segment_eq.2.1.h5')
     wandb_logger = WandbLogger()
-    trainer = pl.Trainer(max_epochs=5, gpus=1, auto_select_gpus=True, logger=wandb_logger, precision=16, strategy="ddp")
+    trainer = pl.Trainer(max_epochs=5, gpus=1, auto_select_gpus=True, logger=wandb_logger, precision=16,
+                         strategy=DDPPlugin(find_unused_parameters=False))
     trainer.tune(model)
     trainer.fit(model)
     trainer.test(model)
