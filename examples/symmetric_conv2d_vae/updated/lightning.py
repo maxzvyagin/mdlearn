@@ -10,7 +10,7 @@ import torch
 class CVAE(pl.LightningModule):
     def __init__(self, input_shape, input_path):
         super(CVAE, self).__init__()
-        self.config = config
+        # self.config = config
         # sigmoid is part of BCE with logits loss
         # self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         #                             in_channels=in_channels, out_channels=classes, init_features=32, pretrained=True)
@@ -36,16 +36,6 @@ class CVAE(pl.LightningModule):
             drop_last=True,
             pin_memory=False,
         )
-
-        # self.criterion = nn.BCEWithLogitsLoss()
-        # self.criterion = smp.losses.DiceLoss(mode="binary")
-        self.test_loss = None
-        self.test_accuracy = None
-        self.test_iou = None
-        self.learning_rate = 0.0
-        self.accuracy = torchmetrics.Accuracy()
-        self.iou = torchmetrics.IoU(num_classes=2)
-        self.train_set, self.valid_set, self.test_set = pt_gis_train_test_split(image_type=image_type)
 
     def train_dataloader(self):
         return self.train_loader
@@ -101,7 +91,6 @@ def lightning():
                             '/traj_segment_eq.2.1.h5')
     wandb_logger = WandbLogger()
     trainer = pl.Trainer(max_epochs=5, gpus=1, auto_select_gpus=True, logger=wandb_logger)
-                         # callbacks=[EarlyStopping(monitor="val_accuracy")])
     trainer.tune(model)
     trainer.fit(model)
     trainer.test(model)
