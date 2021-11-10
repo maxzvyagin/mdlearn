@@ -18,7 +18,8 @@ class CVAE(pl.LightningModule):
         # self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         #                             in_channels=in_channels, out_channels=classes, init_features=32, pretrained=True)
         # self.model = smp.MAnet(encoder_name="resnet34", encoder_weights=None, in_channels=in_channels, classes=classes)
-        self.model = SymmetricConv2dVAE(input_shape=input_shape)
+        self.model = SymmetricConv2dVAE(input_shape=input_shape, filters=[64, 64, 64, 64], kernels=[5, 3, 3, 3],
+                                        strides=[2, 2, 2, 2], latent_dim=10)
 
         with h5py.File(input_path) as f:
             contact_maps = np.array(f["contact_map"])
