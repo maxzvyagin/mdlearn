@@ -64,9 +64,10 @@ class CVAE(pl.LightningModule):
         recon_x = recon_x
         x = outputs['expected']
         x = x
-        kld_loss = self.model.kld_loss()
-        recon_loss = self.criterion(recon_x, x)
-        loss = 1.0 * recon_loss + kld_loss
+        # kld_loss = self.model.kld_loss()
+        recon_loss = self.criterion(recon_x.half(), x.half())
+        # loss = 1.0 * recon_loss + kld_loss
+        loss = recon_loss
         # only use when  on dp
         logs = {'train_loss': loss.detach().cpu(), "train_recon_loss":recon_loss.detach().cpu(),
                 "train_kld_loss": kld_loss.detach().cpu()}
@@ -82,9 +83,10 @@ class CVAE(pl.LightningModule):
         recon_x = recon_x.half()
         x = outputs['expected']
         x = x.half()
-        kld_loss = self.model.kld_loss().float()
+        # kld_loss = self.model.kld_loss().float()
         recon_loss = self.criterion(recon_x, x)
-        loss = 1.0 * recon_loss + kld_loss
+        # loss = 1.0 * recon_loss + kld_loss
+        loss = recon_loss
         # only use when  on dp
         logs = {'test_loss': loss.detach().cpu(), "test_recon_loss": recon_loss.detach().cpu(),
                 "test_kld_loss": kld_loss.detach().cpu()}
