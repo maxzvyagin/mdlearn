@@ -49,7 +49,7 @@ class CVAE(pl.LightningModule):
         # auto finding learning rate
         # optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         # wandb.log({'learning_rate': self.learning_rate})
-        optimizer = torch.optim.Adam(self.parameters(), lr=0.01)
+        optimizer = torch.optim.RMSprop(self.parameters(), lr=0.001)
         # optimizer = torch.optim.RMSprop(self.parameters(), lr=self.config['learning_rate'])
         return optimizer
 
