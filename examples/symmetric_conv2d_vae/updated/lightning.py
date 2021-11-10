@@ -76,7 +76,7 @@ class CVAE(pl.LightningModule):
         return {'loss': loss, 'logs': logs}
 
     def test_step(self, test_batch, batch_idx):
-        x = train_batch["X"].half()
+        x = test_batch["X"].half()
         return {'forward': self.forward(x), 'expected': x}
 
     def test_step_end(self, outputs):
