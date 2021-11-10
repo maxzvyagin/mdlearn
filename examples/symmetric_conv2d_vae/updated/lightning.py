@@ -119,4 +119,5 @@ def lightning():
 
 if __name__ == "__main__":
     # wandb.init(project='cvae', entity='mzvyagin', group="ddp")
+    torch.backends.cudnn.benchmark = False
     lightning()
