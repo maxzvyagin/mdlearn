@@ -6,6 +6,7 @@ import h5py
 import wandb
 import torch
 import numpy as np
+from pytorch_lightning.loggers import WandbLogger
 
 class CVAE(pl.LightningModule):
     def __init__(self, input_shape, input_path):
