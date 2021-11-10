@@ -34,7 +34,7 @@ class CVAE(pl.LightningModule):
             dataset,
             0.8,
             "random",
-            batch_size=128,
+            batch_size=156,
             shuffle=True
         )
 
