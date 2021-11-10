@@ -31,7 +31,7 @@ class CVAE(pl.LightningModule):
             dataset,
             0.8,
             "partition",
-            batch_size=4,
+            batch_size=1,
             shuffle=True,
             num_workers=2,
             prefetch_factor=2,
