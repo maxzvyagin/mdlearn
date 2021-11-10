@@ -35,7 +35,8 @@ class CVAE(pl.LightningModule):
             0.8,
             "random",
             batch_size=64,
-            shuffle=True
+            shuffle=True,
+            num_workers=256
         )
 
     def train_dataloader(self):
