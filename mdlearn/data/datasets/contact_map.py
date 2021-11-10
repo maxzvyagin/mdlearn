@@ -179,9 +179,9 @@ class ContactMapDataset(Dataset):
 
     def _get_data(self, idx) -> torch.Tensor:
         # Data is stored as np.concatenate((row_inds, col_inds))
-        indices = torch.from_numpy(self.data[idx].reshape(2, -1)).to(torch.long)
+        indices = torch.from_numpy(self.data[idx].reshape(2, -1)).to(torch.half)
         # Create array of 1s, all values in the contact map are 1.
-        values = torch.ones(indices.shape[1], dtype=torch.float32)
+        values = torch.ones(indices.shape[1], dtype=torch.float16)
         # Set shape to the last 2 elements of self.shape.
         data = torch.sparse.FloatTensor(indices, values, self.shape[-2:]).to_dense()
         data = data.view(self.shape)
