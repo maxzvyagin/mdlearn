@@ -101,7 +101,7 @@ def lightning():
                  input_path='/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/bba_deepdrive/chainA_h5_data/traj_segment_eq.2.1.h5')
     wandb_logger = WandbLogger()
     trainer = pl.Trainer(max_epochs=5, gpus=1, auto_select_gpus=True, logger=wandb_logger, precision=16,
-                         strategy=DDPPlugin(find_unused_parameters=False))
+                         strategy=DDPPlugin(find_unused_parameters=False), log_every_n_steps=16)
     trainer.tune(model)
     trainer.fit(model)
     trainer.test(model)
