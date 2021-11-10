@@ -107,5 +107,5 @@ def lightning():
     trainer.test(model)
 
 if __name__ == "__main__":
-    wandb.init(project='cvae', entity='mzvyagin')
+    wandb.init(project='cvae', entity='mzvyagin', group="ddp")
     lightning()
