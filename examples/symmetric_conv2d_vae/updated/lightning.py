@@ -42,6 +42,7 @@ class CVAE(pl.LightningModule):
             0.8,
             "random",
             batch_size=200,
+            num_workers=0,
             # batch_size=64,
             shuffle=True
         )
