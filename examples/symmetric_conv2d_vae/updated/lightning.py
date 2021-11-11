@@ -38,7 +38,7 @@ class CVAE(pl.LightningModule):
         print(f"Number of contact maps: {len(contact_maps)}")
         scalars = {"rmsd": scalars}
 
-        dataset = ContactMapDataset(data=contact_maps, shape=self.real_shape, scalars=scalars, pad=True)
+        dataset = ContactMapDataset(data=contact_maps, shape=self.real_shape, scalars=scalars, final_shape=512)
         self.train_loader, self.valid_loader = train_valid_split(
             dataset,
             0.8,
@@ -114,11 +114,11 @@ def lightning():
     torch.set_num_threads(NUM_DATA_WORKERS)
     torch.manual_seed(0)
     input_path_list = glob.glob('/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/anda_newsim_7egq_segmentA/chainA_subset/*.h5')
-    model = CVAE(model_shape=[1, 1024, 1024], real_shape=[1, 926, 926],
+    model = CVAE(model_shape=[1, 512, 512], real_shape=[1, 926, 926],
                  input_path_list=input_path_list)
                  # input_path='/homes/mzvyagin/gordon_bell_processing/anda_newsim_7egq_segmentA/traj_segment_eq.2.10.h5')
     wandb_logger = WandbLogger(project="cvae", entity="mzvyagin", group="ddp")
-    trainer = pl.Trainer(max_epochs=5, gpus=8, auto_select_gpus=True, logger=wandb_logger, num_nodes=1, precision=16,
+    trainer = pl.Trainer(max_epochs=5, gpus=1, auto_select_gpus=True, logger=wandb_logger, num_nodes=1, precision=16,
                          strategy=DDPPlugin(find_unused_parameters=False), benchmark=True)
     trainer.fit(model)
     # trainer.test(model)
