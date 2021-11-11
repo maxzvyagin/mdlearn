@@ -118,7 +118,7 @@ def lightning():
                  input_path_list=input_path_list)
                  # input_path='/homes/mzvyagin/gordon_bell_processing/anda_newsim_7egq_segmentA/traj_segment_eq.2.10.h5')
     wandb_logger = WandbLogger(project="cvae", entity="mzvyagin", group="ddp")
-    trainer = pl.Trainer(max_epochs=5, gpus=1, auto_select_gpus=True, logger=wandb_logger, num_nodes=1,
+    trainer = pl.Trainer(max_epochs=5, gpus=2, auto_select_gpus=True, logger=wandb_logger, num_nodes=1,
                          strategy=DDPPlugin(find_unused_parameters=False))
     trainer.fit(model)
     trainer.test(model)
