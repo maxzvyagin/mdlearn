@@ -70,8 +70,8 @@ class CVAE(pl.LightningModule):
 
     def training_step(self, train_batch, batch_idx):
         # x, y = train_batch
-        # x = train_batch["X"].half()
-        x = train_batch["X"]
+        x = train_batch["X"].half()
+        # x = train_batch["X"]
         return {'forward': self.forward(x), 'expected': x}
 
     def training_step_end(self, outputs):
@@ -79,8 +79,8 @@ class CVAE(pl.LightningModule):
         # recon_x = recon_x.clamp(0, 1)
         x = outputs['expected']
         kld_loss = self.model.kld_loss().float()
-        # recon_loss = self.criterion(recon_x.half(), x.half()).float()
-        recon_loss = self.criterion(recon_x, x)
+        recon_loss = self.criterion(recon_x.half(), x.half()).float()
+        # recon_loss = self.criterion(recon_x, x)
         loss = 1.0 * recon_loss + kld_loss
         # loss = recon_loss
         # only use when  on dp
@@ -118,7 +118,7 @@ def lightning():
                  input_path_list=input_path_list)
                  # input_path='/homes/mzvyagin/gordon_bell_processing/anda_newsim_7egq_segmentA/traj_segment_eq.2.10.h5')
     wandb_logger = WandbLogger(project="cvae", entity="mzvyagin", group="ddp")
-    trainer = pl.Trainer(max_epochs=5, gpus=8, auto_select_gpus=True, logger=wandb_logger, num_nodes=1,
+    trainer = pl.Trainer(max_epochs=5, gpus=8, auto_select_gpus=True, logger=wandb_logger, num_nodes=1, precision=16,
                          strategy=DDPPlugin(find_unused_parameters=False), benchmark=True)
     trainer.fit(model)
     # trainer.test(model)
