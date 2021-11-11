@@ -142,7 +142,8 @@ class ContactMapDataset(Dataset):
         shape: Tuple[int, int, int],
         scalars: Dict[str, np.ndarray] = {},
         scalar_requires_grad: bool = False,
-        final_shape = None
+        final_shape = None,
+        pad = False
     ):
         """
         Parameters
@@ -176,6 +177,7 @@ class ContactMapDataset(Dataset):
         self.scalars = scalars
         self._scalar_requires_grad = scalar_requires_grad
         self.final_shape = final_shape
+        self.pad = self.pad
 
     def _get_data(self, idx) -> torch.Tensor:
         # Data is stored as np.concatenate((row_inds, col_inds))
@@ -188,6 +190,8 @@ class ContactMapDataset(Dataset):
         if self.final_shape is not None:
             data = data[:, :self.final_shape, :self.final_shape]
             print(data.shape)
+        if self.pad:
+            data = torch.nn.functional.pad(data, (98, 0, 98, 0))
         return data
 
     def __len__(self):
