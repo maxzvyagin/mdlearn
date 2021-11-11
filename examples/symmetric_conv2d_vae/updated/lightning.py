@@ -22,7 +22,7 @@ class CVAE(pl.LightningModule):
         # self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         #                             in_channels=in_channels, out_channels=classes, init_features=32, pretrained=True)
         # self.model = smp.MAnet(encoder_name="resnet34", encoder_weights=None, in_channels=in_channels, classes=classes)
-        self.model = SymmetricConv2dVAE(input_shape=input_shape, filters=[64, 64, 64, 64], kernels=[5, 5, 5, 5],
+        self.model = SymmetricConv2dVAE(input_shape=input_shape, filters=[64, 64, 64, 32], kernels=[5, 5, 5, 5],
                                         strides=[2, 2, 2, 2], latent_dim=10, affine_widths=[64], activation="None")
         self.criterion = torch.nn.BCEWithLogitsLoss()
 
