@@ -189,7 +189,7 @@ class ContactMapDataset(Dataset):
         data = data.view(self.shape)
         if self.final_shape is not None:
             data = data[:, :self.final_shape, :self.final_shape]
-            print(data.shape)
+            # print(data.shape)
         if self.pad:
             data = torch.nn.functional.pad(data, (0, 98, 0, 98))
             # print(data.shape)
