@@ -191,7 +191,8 @@ class ContactMapDataset(Dataset):
             data = data[:, :self.final_shape, :self.final_shape]
             print(data.shape)
         if self.pad:
-            data = torch.nn.functional.pad(data, (98, 0, 98, 0))
+            data = torch.nn.functional.pad(data.squeeze(), (98, 0, 98, 0))
+            data = data.unsqueeze(0)
             # print(data.shape)
         return data
 
