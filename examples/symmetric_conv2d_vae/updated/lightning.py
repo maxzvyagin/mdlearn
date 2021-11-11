@@ -30,8 +30,8 @@ class CVAE(pl.LightningModule):
         scalars = []
         for file in input_path_list:
             with h5py.File(file, "r") as f:
-                contact_maps.extend(list(f["contact_map"]))
-                scalars.extend(list(f["rmsd"]))
+                contact_maps.extend(f["contact_map"][...])
+                scalars.extend(f["rmsd"][...])
                 # scalars = {"rmsd": np.array(f["rmsd"])}
 
         print(f"Number of contact maps: {len(contact_maps)}")
