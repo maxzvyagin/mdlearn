@@ -192,7 +192,7 @@ class ContactMapDataset(Dataset):
             print(data.shape)
         if self.pad:
             data = torch.nn.functional.pad(data, (98, 0, 98, 0))
-            print(data.shape)
+            # print(data.shape)
         return data
 
     def __len__(self):
