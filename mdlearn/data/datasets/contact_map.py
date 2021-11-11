@@ -177,7 +177,7 @@ class ContactMapDataset(Dataset):
         self.scalars = scalars
         self._scalar_requires_grad = scalar_requires_grad
         self.final_shape = final_shape
-        self.pad = self.pad
+        self.pad = pad
 
     def _get_data(self, idx) -> torch.Tensor:
         # Data is stored as np.concatenate((row_inds, col_inds))
