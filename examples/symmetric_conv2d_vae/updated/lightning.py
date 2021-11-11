@@ -117,7 +117,6 @@ def lightning():
     wandb_logger = WandbLogger(project="cvae", entity="mzvyagin", group="ddp")
     trainer = pl.Trainer(max_epochs=5, gpus=8, auto_select_gpus=True, logger=wandb_logger, precision=16, num_nodes=1,
                          strategy=DDPPlugin(find_unused_parameters=False))
-    # trainer.tune(model)
     trainer.fit(model)
     trainer.test(model)
 
