@@ -37,7 +37,7 @@ class CVAE(pl.LightningModule):
         print(f"Number of contact maps: {len(contact_maps)}")
         scalars = {"rmsd": scalars}
 
-        dataset = ContactMapDataset(data=contact_maps, shape=self.input_shape, scalars=scalars)
+        dataset = ContactMapDataset(data=contact_maps, shape=self.input_shape, scalars=scalars, pad=True)
         self.train_loader, self.valid_loader = train_valid_split(
             dataset,
             0.8,
