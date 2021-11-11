@@ -13,16 +13,17 @@ import glob
 NUM_DATA_WORKERS = 4
 
 class CVAE(pl.LightningModule):
-    def __init__(self, input_shape, input_path_list):
+    def __init__(self, model_shape, real_shape, input_path_list):
         super(CVAE, self).__init__()
-        self.input_shape = input_shape
+        self.model_shape = model_shape
+        self.real_shape = real_shape
         # self.input_path = input_path
         # self.config = config
         # sigmoid is part of BCE with logits loss
         # self.model = torch.hub.load('mateuszbuda/brain-segmentation-pytorch', 'unet',
         #                             in_channels=in_channels, out_channels=classes, init_features=32, pretrained=True)
         # self.model = smp.MAnet(encoder_name="resnet34", encoder_weights=None, in_channels=in_channels, classes=classes)
-        self.model = SymmetricConv2dVAE(input_shape=input_shape, filters=[64, 64, 64, 64], kernels=[5, 5, 5, 5],
+        self.model = SymmetricConv2dVAE(input_shape=model_shape, filters=[64, 64, 64, 64], kernels=[5, 5, 5, 5],
                                         strides=[2, 2, 2, 2], latent_dim=10, affine_widths=[64], activation="None")
         self.criterion = torch.nn.BCEWithLogitsLoss()
 
@@ -37,7 +38,7 @@ class CVAE(pl.LightningModule):
         print(f"Number of contact maps: {len(contact_maps)}")
         scalars = {"rmsd": scalars}
 
-        dataset = ContactMapDataset(data=contact_maps, shape=self.input_shape, scalars=scalars, pad=True)
+        dataset = ContactMapDataset(data=contact_maps, shape=self.real_shape, scalars=scalars, pad=True)
         self.train_loader, self.valid_loader = train_valid_split(
             dataset,
             0.8,
@@ -111,7 +112,7 @@ def lightning():
     torch.set_num_threads(NUM_DATA_WORKERS)
     torch.manual_seed(0)
     input_path_list = glob.glob('/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/anda_newsim_7egq_segmentA/chainA_subset/*.h5')
-    model = CVAE(input_shape=[1, 926, 926],
+    model = CVAE(model_shape=[1, 1024, 1024], real_shape=[1, 926, 926],
                  input_path_list=input_path_list)
                  # input_path='/homes/mzvyagin/gordon_bell_processing/anda_newsim_7egq_segmentA/traj_segment_eq.2.10.h5')
     wandb_logger = WandbLogger(project="cvae", entity="mzvyagin", group="ddp")
