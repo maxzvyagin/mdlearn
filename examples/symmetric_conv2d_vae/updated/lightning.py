@@ -10,6 +10,8 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.plugins import DDPPlugin
 import glob
 
+NUM_DATA_WORKERS = 4
+
 class CVAE(pl.LightningModule):
     def __init__(self, input_shape, input_path_list):
         super(CVAE, self).__init__()
@@ -40,10 +42,11 @@ class CVAE(pl.LightningModule):
             dataset,
             0.8,
             "random",
-            batch_size=350,
-            num_workers=1,
-            prefetch_factor=1,
-            # batch_size=64,
+            batch_size=256,
+            num_workers=NUM_DATA_WORKERS,
+            prefetch_factor=4,
+            pin_memory=True,
+            persistent_workers=True,
             shuffle=True
         )
 
@@ -105,6 +108,7 @@ class CVAE(pl.LightningModule):
 
 
 def lightning():
+    torch.set_num_threads(NUM_DATA_WORKERS)
     torch.manual_seed(0)
     input_path_list = glob.glob('/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/anda_newsim_7egq_segmentA/chainA_subset/*.h5')
     model = CVAE(input_shape=[1, 926, 926],
@@ -113,7 +117,7 @@ def lightning():
     wandb_logger = WandbLogger(project="cvae", entity="mzvyagin", group="ddp")
     trainer = pl.Trainer(max_epochs=5, gpus=8, auto_select_gpus=True, logger=wandb_logger, precision=16, num_nodes=1,
                          strategy=DDPPlugin(find_unused_parameters=False))
-    trainer.tune(model)
+    # trainer.tune(model)
     trainer.fit(model)
     trainer.test(model)
 
