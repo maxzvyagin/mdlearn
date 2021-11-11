@@ -70,7 +70,8 @@ class CVAE(pl.LightningModule):
 
     def training_step(self, train_batch, batch_idx):
         # x, y = train_batch
-        x = train_batch["X"].half()
+        # x = train_batch["X"].half()
+        x = train_batch["X"]
         return {'forward': self.forward(x), 'expected': x}
 
     def training_step_end(self, outputs):
@@ -89,7 +90,8 @@ class CVAE(pl.LightningModule):
         return {'loss': loss, 'logs': logs}
 
     def test_step(self, test_batch, batch_idx):
-        x = test_batch["X"].half()
+        # x = test_batch["X"].half()
+        x = train_batch["X"]
         return {'forward': self.forward(x), 'expected': x}
 
     def test_step_end(self, outputs):
@@ -116,7 +118,7 @@ def lightning():
                  input_path_list=input_path_list)
                  # input_path='/homes/mzvyagin/gordon_bell_processing/anda_newsim_7egq_segmentA/traj_segment_eq.2.10.h5')
     wandb_logger = WandbLogger(project="cvae", entity="mzvyagin", group="ddp")
-    trainer = pl.Trainer(max_epochs=5, gpus=8, auto_select_gpus=True, logger=wandb_logger, precision=16, num_nodes=1,
+    trainer = pl.Trainer(max_epochs=5, gpus=8, auto_select_gpus=True, logger=wandb_logger, num_nodes=1,
                          strategy=DDPPlugin(find_unused_parameters=False))
     trainer.fit(model)
     trainer.test(model)
