@@ -43,7 +43,7 @@ class CVAE(pl.LightningModule):
             dataset,
             0.8,
             "random",
-            batch_size=256,
+            batch_size=128,
             num_workers=NUM_DATA_WORKERS,
             prefetch_factor=4,
             pin_memory=True,
