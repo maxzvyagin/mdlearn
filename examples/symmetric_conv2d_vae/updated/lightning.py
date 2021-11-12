@@ -115,7 +115,7 @@ class CVAE(pl.LightningModule):
 def lightning():
     torch.set_num_threads(NUM_DATA_WORKERS)
     torch.manual_seed(0)
-    input_path_list = glob.glob('/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/anda_newsim_7egq_segmentA/chainA_subset/*.h5')
+    input_path_list = glob.glob('/lus/theta-fs0/projects/CVD-Mol-AI/mzvyagin/gordon_bell/anda_newsim_7egq_segmentA/small_subset/*.h5')
     model = CVAE(model_shape=[1, 1024, 1024], real_shape=[1, 926, 926],
                  input_path_list=input_path_list)
                  # input_path='/homes/mzvyagin/gordon_bell_processing/anda_newsim_7egq_segmentA/traj_segment_eq.2.10.h5')
